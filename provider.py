@@ -71,12 +71,12 @@ class MangaProvider:
             headers=self._headers,
         )
 
+        if not response.ok:
+            raise MangaException(response.status_code, response.reason)
+
         json_response = response.json()
 
         if len(json_response["images"]) == 0:
             raise MangaException(404, "Pages not found")
-
-        with open("test.json", "w") as f:
-            f.write(json.dumps(json_response, indent=4))
 
         return json_response
