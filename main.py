@@ -1,12 +1,9 @@
+import json
 from provider import MangaProvider
 
 manga_provider = MangaProvider()
 
-search_result = manga_provider.search_manga("martial peak")
+search_result = manga_provider.search_manga("hypnosis")
 
-id = 7302
-page = 1
-chapters = manga_provider.get_chapters(id, page)
-
-release_id = 445082
-pages = manga_provider.get_pages(release_id)
+with open("result.json", "w") as f:
+    f.write(json.dumps(search_result, indent=4))
