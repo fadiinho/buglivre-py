@@ -1,6 +1,5 @@
-from typing import Any, List, Dict
+from typing import Any, Dict
 import requests
-import json
 
 
 class MangaException(Exception):
@@ -24,17 +23,17 @@ class MangaProvider:
             "content-type": "application/x-www-form-urlencoded",
         }
 
-    def _map_nsfw(self, series: List[Dict[str, Any]]):
-        for (i, serie) in enumerate(series):
-            for category in serie["categories"]:
-                category_id: int = category["id_category"]
-                if category_id == 61:
-                    series[i]["isNsfw"] = True
-                    break
-                else:
-                    series[i]["isNsfw"] = False
+    def _map_nsfw(self, serie: Dict[str, Any]):
+        # for (i, serie) in enumerate(series):
+        for category in serie["categories"]:
+            category_id: int = category["id_category"]
+            if category_id == 61:
+                serie["isNsfw"] = True
+                break
+            else:
+                serie["isNsfw"] = False
 
-        return series
+        return serie
 
     def search_manga(self, search: str):
         """Search for a manga"""
@@ -52,7 +51,7 @@ class MangaProvider:
         if not json_response["series"]:
             raise MangaException(404, "Manga not found")
 
-        return self._map_nsfw(json_response["series"])
+        return list(map(self._map_nsfw, json_response["series"]))
 
     def get_chapters(self, id: int, page: int):
         """Returns the chapters of a manga"""
